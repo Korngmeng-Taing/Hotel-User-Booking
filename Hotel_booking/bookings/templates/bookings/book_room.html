@@ -1,0 +1,72 @@
+{% extends 'bookings/main.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <!-- Card Header -->
+                <div class="card-header bg-primary text-white text-center">
+                    <h2 class="fw-bold">Book a Room</h2>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body bg-light">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Room Selection -->
+                        <div class="form-group mb-4">
+                            <label for="id_room" class="form-label fw-bold">Select Room</label>
+                            <select name="room" id="id_room" class="form-select">
+                                <option value="">Select a Room</option>
+                                {% for room in rooms %}
+                                <option value="{{ room.id }}">Room {{ room.room_number }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Check-In and Check-Out Dates on Same Line -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_check_in" class="form-label fw-bold">Check-In Date</label>
+                                    <input type="text" id="id_check_in" name="check_in" class="form-control flatpickr">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_check_out" class="form-label fw-bold">Check-Out Date</label>
+                                    <input type="text" id="id_check_out" name="check_out"
+                                        class="form-control flatpickr">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold">Book Now</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Flatpickr Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        flatpickr("#id_check_in", {
+            enableTime: false,
+            dateFormat: "Y-m-d",
+            minDate: "today"
+        });
+
+        flatpickr("#id_check_out", {
+            enableTime: false,
+            dateFormat: "Y-m-d",
+            minDate: "today"
+        });
+    });
+</script>
+{% endblock %}

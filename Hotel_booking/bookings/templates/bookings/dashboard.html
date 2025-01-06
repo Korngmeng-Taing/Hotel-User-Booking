@@ -1,0 +1,47 @@
+{% extends 'bookings/main.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div id="roomCarousel" class="carousel slide shadow-lg" data-bs-ride="carousel">
+                <!-- Carousel Indicators -->
+                <ol class="carousel-indicators">
+                    {% for room in rooms %}
+                    <li data-bs-target="#roomCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+                        class="{% if forloop.first %}active{% endif %}"></li>
+                    {% endfor %}
+                </ol>
+
+                <!-- Carousel Items -->
+                <div class="carousel-inner rounded">
+                    {% for room in rooms %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ room.image.url }}" class="d-block w-100" alt="Room {{ room.room_number }}"
+                            style="height: 400px; object-fit: cover;">
+                        <div class="text-center bg-light p-3">
+                            <h4 class="fw-bold">{{ room.room_type }} - Room {{ room.room_number }}</h4>
+                            <p>
+                                <strong>Price:</strong> ${{ room.price_per_night }}<br>
+                                <strong>Capacity:</strong> {{ room.capacity }} people<br>
+                                <strong>Size:</strong> {{ room.size }} sq meters
+                            </p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Carousel Controls -->
+                <a class="carousel-control-prev" href="#roomCarousel" role="button" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#roomCarousel" role="button" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
