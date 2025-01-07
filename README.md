@@ -15,7 +15,6 @@ Welcome to the **Hotel Booking Web Application**! This platform enables users to
 ### For Admins:
 - **Room Management**: Add, edit, and delete room details.
 - **Booking Management**: View and manage all bookings.
-- **Role-Based Access Control**: Restrict functionalities based on user roles (e.g., admin, staff, customer).
 
 ---
 
@@ -25,7 +24,7 @@ Welcome to the **Hotel Booking Web Application**! This platform enables users to
 - **Frontend**: HTML5, CSS3, Bootstrap 5
 - **Database**: SQLite (default, can be switched to PostgreSQL or MySQL for production)
 - **Libraries**: Flatpickr for date selection
-- **Deployment**: (Optional) Deployed on platforms like Heroku or AWS
+- **Deployment**: (Optional)
 
 ---
 
