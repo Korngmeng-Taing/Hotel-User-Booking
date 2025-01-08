@@ -93,6 +93,8 @@ Follow these steps to set up the project locally:
 
 ## Project Structure
 
+main file
+
 ```plaintext
 hotel-booking/
 ├── bookings/               # Core application logic
@@ -101,7 +103,7 @@ hotel-booking/
 │   ├── views.py            # View functions
 │   ├── models.py           # Database models
 │   ├── forms.py            # Django forms
-├── static/                 # Static files (CSS, JS, images)
+├── upload/media            # upload images
 ├── manage.py               # Django management script
 └── README.md               # Project documentation
 ```
