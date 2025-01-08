@@ -3,36 +3,42 @@ from .models import Room, Booking
 from .forms import BookingForm, CustomUserCreationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from datetime import datetime
+from datetime import datetime ,date
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .decoration import unauthenticated_user, allowed_user
 
-@login_required  # Requires user to be logged in to access this view
+@login_required
 def room_list(request):
+    # Update room availability dynamically
+    bookings = Booking.objects.filter(check_out__lt=date.today())
+    for booking in bookings:
+        room = booking.room
+        if not room.is_available:
+            room.is_available = True
+            room.save()
+            
     rooms = Room.objects.all()  # Fetch all rooms from the database
     return render(request, 'bookings/room_list.html', {'rooms': rooms})
 
 @login_required
 def book_room(request):
     rooms = Room.objects.filter(is_available=True)  # Fetch available rooms only
-    if request.method == 'POST':  # Check if the request method is POST (form submission)
-        form = BookingForm(request.POST)  # Create a form instance with the submitted data
+    if request.method == 'POST':
+        form = BookingForm(request.POST)
         if form.is_valid():
-            booking = form.save(commit=False)  # Create a booking instance but don't save it yet
-            room = booking.room  # Get room associated with the booking
-            check_in = request.POST.get('check_in')  # Get check-in date from the form
-            check_out = request.POST.get('check_out')
-
-            # Redirect to booking_confirm with query parameters
-            url = reverse('booking_confirm', args=[room.id])
-            query_string = f"?check_in={check_in}&check_out={check_out}"
-            return HttpResponseRedirect(url + query_string)
+            booking = form.save(commit=False)
+            booking.save()
+            room = booking.room
+            room.is_available = False  # Mark the room as unavailable
+            room.save()
+            return redirect('booking_success')
     else:
-        form = BookingForm()  # Create an empty form instance
+        form = BookingForm()
 
     return render(request, 'bookings/book_room.html', {'form': form, 'rooms': rooms})
+
 
 @login_required
 def booking_confirm(request, room_id):

@@ -38,7 +38,9 @@ class Booking(models.Model):
 
 @receiver(post_save, sender=Booking)
 def update_room_availability(sender, instance, **kwargs):
+    room = instance.room
     if instance.check_out < date.today():  # If the checkout date is in the past
-        room = instance.room
         room.is_available = True
-        room.save()
+    else:  # If there is a future or current booking
+        room.is_available = False
+    room.save()
