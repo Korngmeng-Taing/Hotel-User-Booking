@@ -13,18 +13,6 @@
                 <div class="card-body bg-light">
                     <form method="post">
                         {% csrf_token %}
-
-                        <!-- Room Selection -->
-                        <div class="form-group mb-4">
-                            <label for="id_room" class="form-label fw-bold">Select Room</label>
-                            <select name="room" id="id_room" class="form-select">
-                                <option value="">Select a Room</option>
-                                {% for room in rooms %}
-                                <option value="{{ room.id }}">Room {{ room.room_number }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
                         <!-- Check-In and Check-Out Dates on Same Line -->
                         <div class="row mb-4">
                             <div class="col-md-6">

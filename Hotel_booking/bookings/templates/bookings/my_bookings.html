@@ -32,11 +32,6 @@
                         {% else %}
                         Completed
                         {% endif %}
-                    </p>
-                    <form method="POST" action="{% url 'delete_booking' booking.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-block">Delete Booking</button>
-                    </form>
                 </div>
             </div>
         </div>

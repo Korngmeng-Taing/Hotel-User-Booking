@@ -35,3 +35,8 @@ class BookingForm(forms.ModelForm):
         }
         #Specifies custom widgets for the check-in and check-out fields to use date input types with specific CSS classes.
         #this widgets use html input element of type date and apply the form-control class for styling
+    
+class RoomForm(forms.ModelForm):
+    class Meta:
+        model = Room
+        fields = ['room_number', 'room_type', 'price_per_night', 'capacity', 'size', 'is_available', 'image']

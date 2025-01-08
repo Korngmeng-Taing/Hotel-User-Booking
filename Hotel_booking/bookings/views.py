@@ -1,20 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Room, Booking
-from .forms import BookingForm, CustomUserCreationForm
+from .forms import BookingForm, CustomUserCreationForm ,RoomForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from datetime import datetime, date
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .decoration import unauthenticated_user
-
+from .decoration import unauthenticated_user,allowed_user
 
 @login_required
 def room_list(request):
     """Update room availability dynamically and display all rooms."""
     today = date.today()
-    bookings = Booking.objects.all()
+    bookings = Booking.objects.select_related('room').all()
 
     # Update room availability dynamically based on bookings
     for booking in bookings:
@@ -25,32 +24,58 @@ def room_list(request):
             room.is_available = True
         room.save()
 
-    rooms = Room.objects.all()  # Fetch all rooms
+    rooms = Room.objects.all()
     return render(request, 'bookings/room_list.html', {'rooms': rooms})
 
 @login_required
 def book_room(request):
     """Handle the room booking process."""
-    rooms = Room.objects.filter(is_available=True)  # Fetch only available rooms
-    if request.method == 'POST':
-        form = BookingForm(request.POST)
-        if form.is_valid():
-            booking = form.save(commit=False)
-            booking.user = request.user  # Associate booking with the logged-in user
-            booking.save()
+    room_id = request.GET.get('room_id')  # Get the room ID from the query string
+    room = None
 
-            room = booking.room
+    # Ensure room exists if room_id is provided
+    if room_id:
+        room = get_object_or_404(Room, id=room_id)
+
+    if request.method == 'POST':
+        check_in = request.POST.get('check_in')
+        check_out = request.POST.get('check_out')
+
+        # Parse the dates
+        try:
+            check_in_date = datetime.strptime(check_in, '%Y-%m-%d').date()
+            check_out_date = datetime.strptime(check_out, '%Y-%m-%d').date()
+        except ValueError:
+            messages.error(request, "Invalid date format. Please use YYYY-MM-DD.")
+            return redirect(f'/book?room_id={room_id}')  # Redirect with room_id
+        # Prevent duplicate bookings
+        if Booking.objects.filter(
+            user=request.user,
+            room=room,
+            check_in=check_in_date,
+            check_out=check_out_date
+        ).exists():
+            messages.error(request, "You already have a booking for this room and date.")
+            return redirect('my_bookings')
+        # Create the booking if the room is valid
+        if room:
+            booking = Booking.objects.create(
+                user=request.user,
+                room=room,
+                check_in=check_in_date,
+                check_out=check_out_date
+            )
             room.is_available = False  # Mark the room as unavailable
             room.save()
 
-            # Redirect to booking confirmation page with query parameters
+            # Redirect to the booking confirmation page with query parameters
             url = reverse('booking_confirm', args=[room.id])
-            query_string = f"?check_in={booking.check_in}&check_out={booking.check_out}"
+            query_string = f"?check_in={check_in_date}&check_out={check_out_date}"
             return HttpResponseRedirect(url + query_string)
-    else:
-        form = BookingForm()
 
-    return render(request, 'bookings/book_room.html', {'form': form, 'rooms': rooms})
+    # Render the booking form with the room context
+    return render(request, 'bookings/book_room.html', {'room': room})
+
 
 @login_required
 def booking_confirm(request, room_id):
@@ -85,47 +110,33 @@ def booking_confirm(request, room_id):
             )
             room.is_available = False
             room.save()
+            messages.success(request, "Booking confirmed!")
             return redirect('booking_success')
+
         elif 'cancel' in request.POST:
-             # Mark the room as available if booking is canceled
-            room.is_available = True
-            room.save()
-            messages.success(request, "Booking has been canceled.")
+            # Delete the booking
+            if Booking.objects.filter(room=room, check_out__gte=date.today()).exists():
+                Booking.objects.filter(room=room, check_out__gte=date.today()).delete()
+            
+            # Check if the room is available after deleting the booking
+            if not Booking.objects.filter(room=room, check_out__gte=date.today()).exists():
+                room.is_available = True
+                room.save()
+            
+            messages.success(request, f"Room {room.room_number} is now available.")
             return redirect('room_list')
 
-    context = {
+    return render(request, 'bookings/booking_confirm.html', {
         'room': room,
         'check_in': check_in,
         'check_out': check_out,
         'total_cost': total_cost,
-    }
-    return render(request, 'bookings/booking_confirm.html', context)
-
+    })
 
 @login_required
 def booking_success(request):
     """Display the booking success page."""
     return render(request, 'bookings/booking_success.html')
-@login_required
-def delete_booking(request, booking_id):
-    """Delete a booking and update room availability."""
-    booking = get_object_or_404(Booking, id=booking_id)
-
-    # Check if the logged-in user is authorized to delete the booking
-    if booking.user != request.user:
-        messages.error(request, "You are not authorized to delete this booking.")
-        return redirect('room_list')
-
-    room = booking.room
-    booking.delete()  # Delete the booking
-
-    # Update room availability
-    if not Booking.objects.filter(room=room, check_out__gte=date.today()).exists():
-        room.is_available = True
-        room.save()
-
-    messages.success(request, "Booking has been successfully deleted.")
-    return redirect('room_list')
 @login_required
 def my_bookings(request):
     """Display the logged-in user's bookings."""
@@ -142,11 +153,113 @@ def my_bookings(request):
         'year': today.year,
     }
     return render(request, 'bookings/my_bookings.html', context)
-def dashboard(request):
-    """Display the dashboard with all rooms."""
+@login_required
+def admin_room_list(request):
+    """Update room availability dynamically and display all rooms."""
+    today = date.today()
+    bookings = Booking.objects.select_related('room').all()
+
+    # Update room availability dynamically based on bookings
+    for booking in bookings:
+        room = booking.room
+        if booking.check_in <= today <= booking.check_out:
+            room.is_available = False
+        else:
+            room.is_available = True
+        room.save()
+
     rooms = Room.objects.all()
-    context = {'rooms': rooms}
+    return render(request, 'bookings/admin_room_list.html', {'rooms': rooms})
+@login_required
+def admin_dashboard(request):
+    if not request.user.is_staff:
+        return redirect('dashboard')  # Redirect non-admins to the user dashboard
+    return render(request, 'bookings/admin_dashboard.html')
+def dashboard(request):
+    rooms = Room.objects.all()  # Fetch all rooms for the slideshow
+    context = {
+        'rooms': rooms,
+    }
     return render(request, 'bookings/dashboard.html', context)
+@login_required
+def admin_booking_list(request):
+    if not request.user.is_staff:
+        return redirect('user_dashboard')  # Redirect non-admins
+    bookings = Booking.objects.select_related('user', 'room').all()
+    return render(request, 'bookings/admin_booking_list.html', {'bookings': bookings})
+@login_required
+def delete_room_admin(request, room_id):
+    """
+    Show a confirmation page before deleting the room.
+    """
+    room = get_object_or_404(Room, id=room_id)
+
+    if request.method == 'POST':
+        # If the request is POST, delete the room
+        room.delete()
+        return redirect('admin_room_list')  # Redirect to the admin room list after deletion
+
+    # If the request is GET, show the confirmation page
+    return render(request, 'bookings/delete_room.html', {'room': room})
+
+@login_required
+def update_room_admin(request, room_id):
+    """
+    Update room details.
+    """
+    room = get_object_or_404(Room, id=room_id)
+
+    if request.method == 'POST':
+        form = RoomForm(request.POST, instance=room)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Room details updated successfully!")
+            return redirect('admin_room_list')  # Redirect back to the admin room list
+    else:
+        form = RoomForm(instance=room)  # Prepopulate the form with the room details
+
+    return render(request, 'bookings/update_room.html', {'form': form})
+
+@login_required
+def update_booking_admin(request, booking_id):
+    """
+    Update a booking's details by admin.
+    """
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    if request.method == 'POST':
+        form = BookingForm(request.POST, instance=booking)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Booking details updated successfully!")
+            return redirect('admin_booking_list')
+    else:
+        form = BookingForm(instance=booking)
+
+    context = {
+        'form': form,
+        'booking': booking,  # Pass the booking object for room details
+    }
+    return render(request, 'bookings/update_booking.html', context)
+@login_required
+def delete_booking_admin(request, booking_id):
+    """
+    Delete a booking by admin.
+    """
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    if request.method == 'POST':
+        room = booking.room
+        booking.delete()
+        # Update room availability
+        if not Booking.objects.filter(room=room, check_out__gte=date.today()).exists():
+            room.is_available = True
+            room.save()
+
+        messages.success(request, "Booking deleted successfully!")
+        return redirect('admin_booking_list')
+
+    return render(request, 'bookings/delete_booking.html', {'booking': booking})
 
 def about_us(request):
     """Display the 'About Us' page."""
@@ -173,15 +286,16 @@ def registerPage(request):
 
 @unauthenticated_user
 def loginPage(request):
-    """Handle user login."""
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            next_url = request.GET.get('next')  # Get the 'next' parameter from the URL
-            return redirect(next_url if next_url else 'dashboard')
+            if user.is_staff:
+                return redirect('admin_dashboard')
+            else:
+                return redirect('dashboard')
         else:
             messages.error(request, 'Invalid username or password')
     return render(request, 'bookings/login.html')
