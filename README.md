@@ -80,7 +80,7 @@ Follow these steps to set up the project locally:
 ---
 
 ## Project Structure
-
+main file
 ```plaintext
 hotel-booking/
 ├── bookings/               # Core application logic
@@ -89,39 +89,10 @@ hotel-booking/
 │   ├── views.py            # View functions
 │   ├── models.py           # Database models
 │   ├── forms.py            # Django forms
-├── static/                 # Static files (CSS, JS, images)
+├── upload/media            # upload images
 ├── manage.py               # Django management script
 └── README.md               # Project documentation
 ```
-
----
-
-## Screenshots
-
-### 1. Dashboard
-![Dashboard](screenshot-dashboard.png)
-
-### 2. Room Booking
-![Room Booking](screenshot-booking.png)
-
-### 3. Login Page
-![Login Page](screenshot-login.png)
-
----
-
-## Deployment
-
-1. **Set Environment Variables**:
-   - `DEBUG=False`
-   - `SECRET_KEY=<your-secret-key>`
-
-2. **Static Files**:
-   ```bash
-   python manage.py collectstatic
-   ```
-
-3. **Deploy**:
-   Use platforms like Heroku, AWS, or DigitalOcean for hosting.
 
 ---
 
