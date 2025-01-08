@@ -1,0 +1,18 @@
+{% extends 'bookings/main.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center text-danger">Confirm Booking Deletion</h1>
+    <p class="text-center mt-3">
+        Are you sure you want to delete this booking for <strong>Room {{ booking.room.room_number }}</strong> -
+        <strong>{{ booking.room.room_type }}</strong>?
+    </p>
+    <div class="text-center mt-4">
+        <form method="POST" action="{% url 'delete_booking' booking.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a href="{% url 'my_bookings' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

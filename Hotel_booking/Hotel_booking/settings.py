@@ -56,7 +56,7 @@ ROOT_URLCONF = 'Hotel_booking.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -127,6 +127,4 @@ MEDIA_URL = 'upload/media/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/dashboard/'  # Optional: Redirect users here after login
-LOGOUT_REDIRECT_URL = '/login/'  # Redirect users to login page after logout
+LOGIN_URL = 'login'
