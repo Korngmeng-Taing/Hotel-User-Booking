@@ -4,7 +4,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from datetime import date
 from django.core.exceptions import ValidationError
-
 class Room(models.Model):
     ROOM_TYPES = [
         ('Single', 'Single'),
@@ -34,12 +33,3 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"Booking: {self.user.username} - {self.room.room_number} ({self.check_in} to {self.check_out})"
-
-@receiver(post_save, sender=Booking)
-def update_room_availability(sender, instance, **kwargs):
-    room = instance.room
-    if instance.check_out < date.today():  # If the checkout date is in the past
-        room.is_available = True
-    else:  # If there is a future or current booking
-        room.is_available = False
-    room.save()
