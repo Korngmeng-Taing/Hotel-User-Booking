@@ -27,7 +27,6 @@ class Booking(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     check_in = models.DateField()
     check_out = models.DateField()
-
     def clean(self):
         # Ensure check-out is after check-in
         if self.check_out <= self.check_in:

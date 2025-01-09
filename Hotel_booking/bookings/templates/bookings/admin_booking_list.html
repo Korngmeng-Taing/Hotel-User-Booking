@@ -8,10 +8,10 @@
         <thead class="thead-dark">
             <tr>
                 <th>User</th>
+                <th>Email</th>
                 <th>Room</th>
                 <th>Check-in</th>
                 <th>Check-out</th>
-                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -19,15 +19,10 @@
             {% for booking in bookings %}
             <tr>
                 <td>{{ booking.user.username }}</td>
+                <td>{{ booking.user.email }}</td>
                 <td>{{ booking.room.room_number }}</td>
                 <td>{{ booking.check_in }}</td>
                 <td>{{ booking.check_out }}</td>
-                <td>
-                    {% if booking.check_out < today %} <span class="badge bg-secondary">Completed</span>
-                        {% else %}
-                        <span class="badge bg-success">Active</span>
-                        {% endif %}
-                </td>
                 <td>
                     <a href="{% url 'update_booking' booking.id %}" class="btn btn-primary btn-sm">Edit</a>
                     <a href="{% url 'delete_booking' booking.id %}" class="btn btn-danger btn-sm">Delete</a>
