@@ -22,16 +22,11 @@
             <div class="card">
                 <img src="{{ booking.room.image.url }}" class="card-img-top" alt="Room Image">
                 <div class="card-body">
-                    <h5 class="card-title">Room {{ booking.room.room_number }} - {{ booking.room.room_type }}</h5>
+                    <h5 class="card-title">Room - {{ booking.room.room_type }} Bed</h5>
                     <p class="card-text">
                         <strong>Check-in:</strong> {{ booking.check_in }}<br>
                         <strong>Check-out:</strong> {{ booking.check_out }}<br>
-                        <strong>Status:</strong>
-                        {% if booking.check_out >= today %}
-                        Active
-                        {% else %}
-                        Completed
-                        {% endif %}
+                        <strong>Number of room:</strong>{{ booking.rooms_booked }}<br>
                 </div>
             </div>
         </div>

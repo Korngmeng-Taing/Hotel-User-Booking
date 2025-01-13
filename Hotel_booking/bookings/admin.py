@@ -3,7 +3,7 @@ from .models import Room, Booking  # Import models from models.py, not redefinin
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ('room_number', 'room_type', 'price_per_night', 'capacity', 'size', 'is_available')
+    list_display = ( 'room_type', 'price_per_night', 'capacity', 'size', 'is_available')
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):

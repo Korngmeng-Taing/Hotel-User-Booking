@@ -13,11 +13,6 @@
                 <div class="card-body bg-light">
                     <form method="post">
                         {% csrf_token %}
-                        <!-- Show Room Details as Read-Only -->
-                        <div class="form-group mb-3">
-                            <label class="form-label fw-bold">Room:</label>
-                            <input type="text" class="form-control" value="{{ booking.room.room_number }}" readonly>
-                        </div>
                         <!-- Render Form for Check-in and Check-out -->
                         <div class="form-group mb-3">
                             {{ form.check_in.label_tag }}
@@ -27,6 +22,12 @@
                             {{ form.check_out.label_tag }}
                             {{ form.check_out }}
                         </div>
+                        <!-- Rooms Booked -->
+                        <div class="form-group mb-3">
+                            <label for="id_rooms_booked" class="form-label fw-bold">Number of Rooms Booked</label>
+                            {{ form.rooms_booked }}
+                        </div>
+
                         <div class="d-grid">
                             <button type="submit" class="btn btn-success fw-bold">Save Changes</button>
                         </div>

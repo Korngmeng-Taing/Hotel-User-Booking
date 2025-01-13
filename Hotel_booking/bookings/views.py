@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Room, Booking
+from .models import Room, Booking 
 from .forms import BookingForm, CustomUserCreationForm, RoomForm 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -11,35 +11,31 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 
 
-def update_room_availability(room):
-    """Update the availability of a room based on current bookings."""
-    today = date.today()
-    if Booking.objects.filter(room=room, check_out__gte=today, check_in__lte=today).exists():
-        room.is_available = False
-    else:
-        room.is_available = True
-    room.save()
-
-
 @login_required
 def room_list(request):
     """Display all rooms with their availability."""
     rooms = Room.objects.all()
     for room in rooms:
-        update_room_availability(room)
+        room.update_availability()  # Use the model's update method
     return render(request, 'bookings/room_list.html', {'rooms': rooms})
-
 @login_required
 def book_room(request):
     """Handle room booking."""
-    room_id = request.GET.get('room_id')
-    room = get_object_or_404(Room, id=room_id) if room_id else None
+    room_id = request.GET.get('room_id')  # Get room ID from query parameters
+    room = get_object_or_404(Room, id=room_id)
+
+    # Validate if room is available
+    if room.quantity_available <= 0:
+        messages.error(request, "This room is fully booked.")
+        return redirect('room_list')
 
     if request.method == 'POST':
+        # Retrieve form data
         check_in = request.POST.get('check_in')
         check_out = request.POST.get('check_out')
+        rooms_to_book = int(request.POST.get('rooms_to_book', 1))
 
-        # Validate booking dates
+        # Validate dates
         try:
             check_in_date = datetime.strptime(check_in, '%Y-%m-%d').date()
             check_out_date = datetime.strptime(check_out, '%Y-%m-%d').date()
@@ -51,28 +47,26 @@ def book_room(request):
             messages.error(request, "Check-out date must be after the check-in date.")
             return redirect(f'/book?room_id={room_id}')
 
-        # Prevent overlapping bookings
-        if Booking.objects.filter(
-            room=room,
-            check_in__lt=check_out_date,
-            check_out__gt=check_in_date
-        ).exists():
-            messages.error(request, "This room is already booked for the selected dates.")
-            return redirect('room_list')
+        # Validate room availability
+        if rooms_to_book > room.quantity_available:
+            messages.error(request, f"Only {room.quantity_available} rooms are available.")
+            return redirect(f'/book?room_id={room_id}')
 
         # Redirect to booking confirmation page
         url = reverse('booking_confirm', args=[room.id])
-        query_string = f"?check_in={check_in_date}&check_out={check_out_date}"
+        query_string = f"?check_in={check_in}&check_out={check_out}&rooms_to_book={rooms_to_book}"
         return HttpResponseRedirect(url + query_string)
 
+    # Render the booking form for GET requests
     return render(request, 'bookings/book_room.html', {'room': room})
+
 @login_required
 def booking_confirm(request, room_id):
     """Confirm the booking details and process user actions."""
     room = get_object_or_404(Room, id=room_id)
     check_in_str = request.GET.get('check_in')
     check_out_str = request.GET.get('check_out')
-
+    rooms_to_book = int(request.GET.get('rooms_to_book',1))
     # Validate check-in and check-out dates
     try:
         check_in = datetime.strptime(check_in_str, '%Y-%m-%d').date()
@@ -84,22 +78,29 @@ def booking_confirm(request, room_id):
     if check_out <= check_in:
         messages.error(request, "Check-out date must be after the check-in date.")
         return redirect('room_list')
-
-    # Calculate the total cost
+    
+    if rooms_to_book > room.quantity_available:
+        messages.error(request, f"Only {room.quantity_available} rooms are available.")
+        return redirect('room_list')
+    # Calculate total cost
     num_days = (check_out - check_in).days
-    total_cost = num_days * room.price_per_night
+    total_cost = num_days * room.price_per_night*rooms_to_book
 
     if request.method == 'POST':
         if 'confirm' in request.POST:
-            # Create the booking
+            # Create booking
             Booking.objects.create(
                 user=request.user,
                 room=room,
                 check_in=check_in,
-                check_out=check_out
+                check_out=check_out,
+                rooms_booked=rooms_to_book
             )
-            # Update room availability
-            update_room_availability(room)
+
+            # Update room quantity and availability
+            room.quantity_available -= rooms_to_book
+            room.update_availability()
+            messages.success(request, "Booking confirmed successfully!")
             return redirect('booking_success')
         elif 'cancel' in request.POST:
             messages.info(request, "Booking canceled.")
@@ -109,10 +110,9 @@ def booking_confirm(request, room_id):
         'room': room,
         'check_in': check_in,
         'check_out': check_out,
+        'rooms_to_book': rooms_to_book,
         'total_cost': total_cost,
     })
-
-
 @login_required
 def booking_success(request):
     """Display the booking success page."""
@@ -129,23 +129,24 @@ def my_bookings(request):
 def admin_booking_list(request):
     """List all bookings for admin."""
     bookings = Booking.objects.select_related('room', 'user').all()
+
     return render(request, 'bookings/admin_booking_list.html', {'bookings': bookings})
 
 
 @login_required
 def delete_booking_admin(request, booking_id):
-    """Delete a booking as admin."""
+    """Delete a booking as admin and restore room availability."""
     booking = get_object_or_404(Booking, id=booking_id)
+    room = booking.room
 
     if request.method == 'POST':
-        room = booking.room
+        room.quantity_available += booking.rooms_booked
+        room.update_availability()
         booking.delete()
-        update_room_availability(room)
         messages.success(request, "Booking deleted successfully!")
         return redirect('admin_booking_list')
 
-    return render(request, 'bookings/delete_booking.html', {'booking': booking})
-
+    return render(request, 'bookings/delete_booking_admin.html', {'booking': booking})
 
 @login_required
 def update_booking_admin(request, booking_id):
@@ -156,13 +157,13 @@ def update_booking_admin(request, booking_id):
         form = BookingForm(request.POST, instance=booking)
         if form.is_valid():
             form.save()
-            update_room_availability(booking.room)
+            booking.room.update_availability()
             messages.success(request, "Booking updated successfully!")
             return redirect('admin_booking_list')
     else:
         form = BookingForm(instance=booking)
 
-    return render(request, 'bookings/update_booking.html', {'form': form, 'booking': booking})
+    return render(request, 'bookings/update_booking_admin.html', {'form': form, 'booking': booking})
 
 
 @login_required
@@ -174,7 +175,7 @@ def admin_room_list(request):
     """List all rooms for admin."""
     rooms = Room.objects.all()
     for room in rooms:
-        update_room_availability(room)
+        room.update_availability()
     return render(request, 'bookings/admin_room_list.html', {'rooms': rooms})
 
 
@@ -223,10 +224,10 @@ def registerPage(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
+            # Save the user
             form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}! You can now log in.')
-            return redirect('login')
+            messages.success(request, 'Registration successful!')
+            return redirect('dashboard')
     else:
         form = CustomUserCreationForm()
 

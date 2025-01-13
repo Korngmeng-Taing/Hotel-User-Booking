@@ -7,10 +7,19 @@
             <div class="card shadow-lg border-0">
                 <!-- Card Header -->
                 <div class="card-header bg-primary text-white text-center">
-                    <h2 class="fw-bold">Book a Room</h2>
+                    <h2 class="fw-bold">Booking the Room</h2>
                 </div>
                 <!-- Card Body -->
                 <div class="card-body bg-light">
+                    <!-- Display Backend Error Messages -->
+                    {% if messages %}
+                    <div class="alert alert-danger">
+                        {% for message in messages %}
+                        <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
                     <form method="post">
                         {% csrf_token %}
                         <!-- Check-In and Check-Out Dates on Same Line -->
@@ -18,16 +27,27 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="id_check_in" class="form-label fw-bold">Check-In Date</label>
-                                    <input type="text" id="id_check_in" name="check_in" class="form-control flatpickr">
+                                    <input type="text" id="id_check_in" name="check_in" class="form-control flatpickr"
+                                        required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="id_check_out" class="form-label fw-bold">Check-Out Date</label>
-                                    <input type="text" id="id_check_out" name="check_out"
-                                        class="form-control flatpickr">
+                                    <input type="text" id="id_check_out" name="check_out" class="form-control flatpickr"
+                                        required>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Number of Rooms to Book -->
+                        <div class="form-group mb-4">
+                            <label for="rooms_to_book" class="form-label fw-bold">Number of Rooms</label>
+                            <input type="number" id="rooms_to_book" name="rooms_to_book" class="form-control" min="1"
+                                max="{{ room.quantity_available }}" value="1" required>
+                            <small class="form-text text-muted">
+                                Maximum available rooms: {{ room.quantity_available }}
+                            </small>
                         </div>
 
                         <!-- Submit Button -->
@@ -40,10 +60,10 @@
         </div>
     </div>
 </div>
-
 <!-- Flatpickr Script -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Initialize Flatpickr for Date Selection
         flatpickr("#id_check_in", {
             enableTime: false,
             dateFormat: "Y-m-d",
@@ -57,4 +77,6 @@
         });
     });
 </script>
+
+
 {% endblock %}

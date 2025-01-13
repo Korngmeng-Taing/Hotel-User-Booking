@@ -12,21 +12,22 @@
                 <!-- Card Body -->
                 <div class="card-body bg-light text-center">
                     <!-- Image -->
-                    <img src="{{ room.image.url }}" alt="Room {{ room.room_number }}" class="img-fluid booking-img">
-                    <!-- Room Details -->
+                    <img src="{{ room.image.url }}" alt="Room {{ room.room_number }}" class=" booking-img ">
+                    <!-- User Details -->
                     <h4>User Details</h4>
                     <p><strong>Name:</strong> {{ user.username }}</p>
                     <p><strong>Email:</strong> {{ user.email }}</p>
                     <hr>
+                    <!-- Room Details -->
                     <h4 class="mt-3">Room {{ room.room_number }} - {{ room.room_type }}</h4>
                     <p>
                         <strong>Price per night:</strong> ${{ room.price_per_night }}<br>
+                        <strong>Number of Rooms:</strong> {{ rooms_to_book }}<br>
                         <strong>Total Cost:</strong> ${{ total_cost }}<br>
                         <strong>Check-in Date:</strong> {{ check_in }}<br>
                         <strong>Check-out Date:</strong> {{ check_out }}<br>
-
                     </p>
-                    <!-- Buttons -->
+                    <!-- Confirmation Buttons -->
                     <form method="post">
                         {% csrf_token %}
                         <button type="submit" name="confirm" class="btn btn-success me-2">Confirm Booking</button>
@@ -41,14 +42,9 @@
 <style>
     .booking-img {
         max-width: 100%;
-        /* Ensure it doesn't exceed the parent width */
         height: 400px;
-        /* Fixed height for consistency */
         object-fit: cover;
-        /* Ensures the image is cropped properly while maintaining aspect ratio */
         border-radius: 10px;
-        /* Rounded edges for a polished look */
     }
 </style>
-
 {% endblock %}

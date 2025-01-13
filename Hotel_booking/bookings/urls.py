@@ -21,8 +21,9 @@ urlpatterns = [
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('admin-rooms/', views.admin_room_list, name='admin_room_list'),
     path('admin-bookings/', views.admin_booking_list, name='admin_booking_list'),
-    path('delete_room/<int:room_id>',views.delete_room_admin,name='delete_room'),
-    path('update_room/<int:room_id>',views.update_room_admin,name='update_room'),
-    path('delete-booking/<int:booking_id>/', views.delete_booking_admin, name='delete_booking'),
-    path('update-booking/<int:booking_id>/', views.update_booking_admin, name='update_booking'),
+    path('delete_room/<int:room_id>', views.delete_room_admin, name='delete_room'),
+    path('update_room/<int:room_id>', views.update_room_admin, name='update_room'),
+    # Corrected the following two routes:
+    path('update_booking_admin/<int:booking_id>/', views.update_booking_admin, name='update_booking_admin'),
+    path('delete_booking_admin/<int:booking_id>/', views.delete_booking_admin, name='delete_booking_admin'),
 ]
