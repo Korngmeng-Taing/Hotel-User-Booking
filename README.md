@@ -108,53 +108,6 @@ hotel-booking/
 └── README.md               # Project documentation
 ```
 
----
-
-## Screenshots
-
-### 1. Dashboard
-
-![Dashboard](screenshot-dashboard.png)
-
-### 2. Room Booking
-
-![Room Booking](screenshot-booking.png)
-
-### 3. Login Page
-
-![Login Page](screenshot-login.png)
-
----
-
-## Deployment
-
-1. **Set Environment Variables**:
-
-   - `DEBUG=False`
-   - `SECRET_KEY=<your-secret-key>`
-
-2. **Static Files**:
-
-   ```bash
-   python manage.py collectstatic
-   ```
-
-3. **Deploy**:
-   Use platforms like Heroku, AWS, or DigitalOcean for hosting.
-
----
-
-## Contributing
-
-1. Fork the repository.
-2. Create a feature branch: `git checkout -b feature-name`.
-3. Commit changes: `git commit -m 'Add feature'`.
-4. Push to your branch: `git push origin feature-name`.
-5. Open a pull request.
-
----
-
-## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
