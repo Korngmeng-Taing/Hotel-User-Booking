@@ -1,0 +1,67 @@
+{% extends 'bookings/main.html' %}
+
+{% block title %}{{ room.room_type }} Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Image Slideshow -->
+        <div class="col-md-6">
+            <div id="roomCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for image in room_images %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ image.image.url }}" class="d-block w-100" alt="Room Image">
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#roomCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Room Details -->
+        <div class="col-md-6">
+            <h2>{{ room.room_type }}</h2>
+            <p><strong>Room Size:</strong> {{ room.size }} sq meters</p>
+            <p><strong>Capacity:</strong> {{ room.capacity }} people</p>
+            <p><strong>Price:</strong> ${{ room.price_per_night }}</p>
+            <p><strong>Available Rooms:</strong> {{ room.quantity_available }}</p>
+            <p><strong>Features:</strong></p>
+            <ul>
+                <li>Air Conditioning</li>
+                <li>Private Bathroom</li>
+                <li>Flat-screen TV</li>
+                <li>Minibar</li>
+                <li>Free WiFi</li>
+            </ul>
+
+            <h4>Additional Benefits:</h4>
+            <ul>
+                <li>Welcome drink and cold towel on arrival</li>
+                <li>10% discount on food and beverages</li>
+                <li>10% discount on Massage</li>
+                <li>Late check-out till 14:00 (subject to room availability)</li>
+            </ul>
+
+            <h4>In Your Private Bathroom:</h4>
+            <ul>
+                <li>Free toiletries</li>
+                <li>Bathrobe</li>
+                <li>Toilet</li>
+                <li>Bath or Shower</li>
+                <li>Towels</li>
+            </ul>
+
+            <!-- Booking Button -->
+            <a href="{% url 'book_room' %}?room_id={{ room.id }}" class="btn btn-primary btn-lg mt-3">Book Now</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

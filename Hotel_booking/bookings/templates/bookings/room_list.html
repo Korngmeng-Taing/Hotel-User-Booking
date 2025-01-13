@@ -1,34 +1,33 @@
 {% extends 'bookings/main.html' %}
 
+{% block title %}All Rooms{% endblock %}
+
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center">All Rooms</h1>
-    {% if rooms %}
+    <h2 class="text-center mb-4">All Rooms</h2>
     <div class="row">
         {% for room in rooms %}
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <img src="{{ room.image.url }}" class="card-img-fix" alt="Room {{ room.room_number }}">
-                <div class="card-body text-center">
-                    <h5 class="card-title">{{ room.room_type }}Bed</h5>
-                    <p>
-                        <strong>Price: ${{ room.price_per_night }}</strong><br>
-                        <strong>Capacity: {{ room.capacity }} people</strong><br>
-                        <strong>Size: {{room.size }} sq meters</strong><br>
-                        <strong>Available: {{ room.quantity_available }}</strong><br>
-                        {% if room.quantity_available > 0 %}
-                        <a href="{% url 'book_room' %}?room_id={{ room.id }}" class="btn btn-primary">Book Now</a>
-                        {% else %}
-                        <button class="btn btn-secondary" disabled>Unavailable</button>
-                        {% endif %}
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <!-- Default Room Image -->
+                <img src="{{ room.default_image.url }}" class="card-img-top" alt="Room Image">
+
+                <!-- Room Information -->
+                <div class="card-body">
+                    <h5 class="card-title">{{ room.room_type }}</h5>
+                    <p class="card-text">
+                        <strong>Capacity:</strong> {{ room.capacity }} people<br>
+                        <strong>Size:</strong> {{ room.size }} sq meters<br>
+                        <strong>Available:</strong> {{ room.quantity_available }}<br>
                     </p>
+                    <!-- Book Now and View Details Buttons -->
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'room_detail' room.id %}" class="btn btn-secondary btn-sm">View Details</a>
+                    </div>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
-    {% else %}
-    <p class="text-center">No rooms available at the moment. Please check back later.</p>
-    {% endif %}
 </div>
 {% endblock %}

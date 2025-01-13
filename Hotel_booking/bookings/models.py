@@ -6,25 +6,26 @@ from datetime import date
 from django.core.exceptions import ValidationError
 
 class Room(models.Model):
-    ROOM_TYPES = [
-        ('Single', 'Single'),
-        ('Double', 'Double'),
-        ('Suite', 'Suite'),
-    ]
-    room_type = models.CharField(max_length=50, choices=ROOM_TYPES)
+    room_type = models.CharField(max_length=50)
     price_per_night = models.IntegerField()
     is_available = models.BooleanField(default=True)
     capacity = models.PositiveIntegerField()
     size = models.IntegerField()
     quantity_available = models.PositiveIntegerField(default=1)
-    image = models.ImageField(upload_to='upload/media/', blank=True, null=True)
+    default_image = models.ImageField(upload_to='upload/media/', blank=True, null=True)
     def update_availability(self):
         """Update the availability of a room based on quantity available."""
         self.is_available = self.quantity_available > 0
         self.save()
     def __str__(self):
-        return f"Room {self.room_number} ({self.room_type})"
+        return f"Room ({self.room_type})"
+class RoomImage(models.Model):
+    room = models.ForeignKey(Room, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='upload/media/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Image for {self.room.room_type}"
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)

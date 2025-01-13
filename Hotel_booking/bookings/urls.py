@@ -12,6 +12,7 @@ urlpatterns = [
 
     # User-specific routes
     path('rooms/', views.room_list, name='room_list'),
+    path('rooms/<int:room_id>/', views.view_room_detail, name='room_detail'),
     path('book/', views.book_room, name='book_room'),
     path('booking_confirm/<int:room_id>/', views.booking_confirm, name='booking_confirm'),
     path('booking-success/', views.booking_success, name='booking_success'),
