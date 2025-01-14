@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Room, Booking 
+from .models import Room, Booking ,RoomImage
 from .forms import BookingForm, CustomUserCreationForm, RoomForm 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -206,6 +206,16 @@ def update_room_admin(request, room_id):
         form = RoomForm(instance=room)
 
     return render(request, 'bookings/update_room.html', {'form': form})
+
+@login_required
+
+def view_room_detail(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    room_images = RoomImage.objects.filter(room=room)  # Fetch all images related to the room
+    return render(request, 'bookings/room_detail.html', {
+        'room': room,
+        'room_images': room_images,
+    })
 
 def about_us(request):
     """Display the 'About Us' page."""
