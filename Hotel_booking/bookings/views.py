@@ -208,12 +208,14 @@ def update_room_admin(request, room_id):
     return render(request, 'bookings/update_room.html', {'form': form})
 
 @login_required
-def view_room_detail(request, room_id):
-    """Display detailed information about a room."""
-    room = get_object_or_404(Room, id=room_id)
-    room_images = RoomImage.objects.filter(room=room)
-    return render(request, 'bookings/room_detail.html', {'room': room, 'room_images': room_images})
 
+def view_room_detail(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    room_images = RoomImage.objects.filter(room=room)  # Fetch all images related to the room
+    return render(request, 'bookings/room_detail.html', {
+        'room': room,
+        'room_images': room_images,
+    })
 
 def about_us(request):
     """Display the 'About Us' page."""

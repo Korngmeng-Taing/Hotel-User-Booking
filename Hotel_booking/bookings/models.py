@@ -22,7 +22,6 @@ class Room(models.Model):
 class RoomImage(models.Model):
     room = models.ForeignKey(Room, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='upload/media/')
-    uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Image for {self.room.room_type}"

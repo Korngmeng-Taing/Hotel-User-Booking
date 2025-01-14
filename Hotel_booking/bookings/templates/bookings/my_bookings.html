@@ -20,9 +20,9 @@
         {% for booking in bookings %}
         <div class="col-md-4 mb-3">
             <div class="card">
-                <img src="{{ booking.room.image.url }}" class="card-img-top" alt="Room Image">
+                <img src="{{ booking.room.default_image.url }}" class="card-img-top" alt="Room Image">
                 <div class="card-body">
-                    <h5 class="card-title">Room - {{ booking.room.room_type }} Bed</h5>
+                    <h5 class="card-title text-center"> {{ booking.room.room_type }}</h5>
                     <p class="card-text">
                         <strong>Check-in:</strong> {{ booking.check_in }}<br>
                         <strong>Check-out:</strong> {{ booking.check_out }}<br>
