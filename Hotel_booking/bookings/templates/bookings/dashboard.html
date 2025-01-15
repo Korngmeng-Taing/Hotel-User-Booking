@@ -1,9 +1,10 @@
 {% extends 'bookings/main.html' %}
 {% block content %}
+<!-- Carousel Section -->
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <div id="roomCarousel" class="carousel slide shadow-lg" data-bs-ride="carousel">
+            <div id="roomCarousel" class="carousel slide shadow-lg rounded" data-bs-ride="carousel">
                 <!-- Carousel Indicators -->
                 <ol class="carousel-indicators">
                     {% for room in rooms %}
@@ -13,14 +14,13 @@
                 </ol>
 
                 <!-- Carousel Items -->
-                <div class="carousel-inner rounded">
+                <div class="carousel-inner">
                     {% for room in rooms %}
                     <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        <img src="{{ room.default_image.url }}" class="d-block w-100"
-                            style=" height: 400px; object-fit: cover;">
-                        <div class="text-center bg-light p-3">
-                            <h4 class="fw-bold">{{ room.room_type }} - Room {{ room.room_number }}</h4>
-
+                        <img src="{{ room.default_image.url }}" class="d-block w-100 rounded"
+                            style="height: 400px; object-fit: cover;">
+                        <div class="bg-light text-center py-3">
+                            <h4 class="fw-bold mb-0">{{ room.room_type }} - Room {{ room.room_number }}</h4>
                         </div>
                     </div>
                     {% endfor %}
@@ -39,4 +39,55 @@
         </div>
     </div>
 </div>
+
+<!-- About Us Section -->
+<section class="mt-5 py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h3 class="fw-bold text-primary">About Us</h3>
+                <p class="text-muted">
+                    Welcome to <strong>Hotel Booking</strong>, your trusted platform for seamless hotel room
+                    reservations. We provide an unmatched experience for travelers with a variety of options at
+                    affordable prices.
+                </p>
+                <ul class="list-inline mt-3">
+                    <li class="list-inline-item"><i class="bi bi-check-circle-fill text-success me-2"></i>Customer
+                        Satisfaction</li>
+                    <li class="list-inline-item"><i class="bi bi-check-circle-fill text-success me-2"></i>Transparent
+                        Pricing</li>
+                    <li class="list-inline-item"><i class="bi bi-check-circle-fill text-success me-2"></i>Flexibility
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Us Section -->
+<section class="mt-4 py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h3 class="fw-bold text-primary">Contact Us</h3>
+                <p class="text-muted">
+                    Have questions? Reach out to us!
+                </p>
+                <div class="ratio ratio-16x9 mb-4">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.155706625098!2d104.8912516!3d11.5703975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3109517388680e15%3A0x63057e6682968f5!2sInstitute%20of%20Technology%20of%20Cambodia!5e0!3m2!1sen!2skh!4v1614008313984!5m2!1sen!2skh"
+                        width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <ul class="list-unstyled mt-3">
+                    <li class="mb-2"><i class="bi bi-envelope-fill text-primary me-2"></i><strong>Email:</strong>
+                        support@hotelbooking.com</li>
+                    <li class="mb-2"><i class="bi bi-telephone-fill text-primary me-2"></i><strong>Phone:</strong> +855
+                        1234567</li>
+                    <li class="mb-2"><i class="bi bi-geo-alt-fill text-primary me-2"></i><strong>Address:</strong>
+                        Russian Conf Norodom Boulevard, Phnom Penh</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
