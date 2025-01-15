@@ -1,5 +1,4 @@
 {% extends 'bookings/main.html' %}
-{% load static %}
 
 {% block title %}Available Rooms{% endblock %}
 {% block content %}
@@ -9,9 +8,9 @@
         {% for room in rooms %}
         <div class="col-md-4">
             <div class="card mb-4 shadow-sm">
-                <img src="{{ room.default_image.url }}" class="card-img-fix" alt="Room Image">
+                <img src="{{ room.default_image.url }}" class="card-img-top" alt="Room Image">
                 <div class="card-body">
-                    <h5 class="card-title">{{ room.room_type }} Bed </h5>
+                    <h5 class="card-title">{{ room.room_type }}</h5>
                     <p class="card-text">
                         <strong>Price:</strong> ${{ room.price_per_night }}<br>
                         <strong>Capacity:</strong> {{ room.capacity }} people<br>

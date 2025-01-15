@@ -10,29 +10,27 @@ body {
 /* Navbar */
 .navbar {
   background: linear-gradient(135deg, #53a9f9, #2575fc);
-  color: skyblue;
+  color: #ffffff; /* Updated for better contrast */
   padding: 20px;
   border-radius: 0 0 10px 10px;
 }
 .navbar-brand {
   font-size: 1.8rem;
-  color: #280d93 !important; /* Vibrant teal color */
+  color: #ffffff !important; /* Unified color contrast */
   font-weight: bold;
 }
-
 .nav-link {
-  color: #162ca6 !important; /* Soft light text */
+  color: #ffffff !important;
   font-weight: 500;
   transition: color 0.3s ease-in-out;
 }
-
 .nav-link:hover {
-  color: #e74c3c !important; /* Red hover effect */
+  color: #e74c3c !important;
 }
 
 /* Footer */
 .footer {
-  color: #ecf0f1;
+  color: #cccccc; /* Updated for better contrast */
   padding: 20px;
   text-align: center;
   font-size: 0.9rem;
@@ -41,103 +39,73 @@ body {
 /* Card Styles */
 .card {
   border-radius: 15px;
-  background: #1c2833; /* Dark card background */
-  color: #000000; /* Light text */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Strong shadow */
+  background: #1c2833;
+  color: black;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
   border: none;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .card:hover {
-  transform: translateY(-5px); /* Lift effect on hover */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7); /* Enhanced shadow */
+  transform: scale(1.03);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7);
 }
 
-.card-header {
-  background: linear-gradient(
-    90deg,
-    #1abc9c,
-    #16a085
-  ); /* Vibrant green gradient */
-  color: #fff;
-  text-align: center;
-  font-size: 1.8rem;
-  font-weight: bold;
-  padding: 20px;
+/* Table Styling */
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #f9f9f9;
 }
-
-.card-body {
-  padding: 20px;
-  font-size: 1rem;
+.table-hover tbody tr:hover {
+  background-color: #eaeaea;
 }
 
 /* Buttons */
 .btn-primary {
-  background-color: #1abc9c; /* Teal button */
+  background-color: #1abc9c;
   border: none;
   font-weight: 500;
   padding: 10px 20px;
   border-radius: 30px;
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
-
 .btn-primary:hover {
   background-color: #16a085;
-  transform: translateY(-2px); /* Lift effect */
+  transform: translateY(-2px);
+}
+.btn-secondary {
+  background-color: #6c757d;
+  border: none;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 30px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.btn-secondary:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+.room-image {
+  height: 400px; /* Fixed height for all images */
+  object-fit: cover; /* Ensures images fill the area proportionally */
 }
 
-/* Image Styles */
-.img-thumbnail {
-  cursor: pointer;
-  border: 2px solid #34495e; /* Dark border */
-  margin: 5px;
-  border-radius: 10px;
+/* Thumbnails in Gallery */
+.room-thumbnail {
+  width: 100px; /* Fixed width */
+  height: 100px; /* Fixed height */
+  object-fit: cover; /* Ensures thumbnails fill the area proportionally */
+  cursor: pointer; /* Adds pointer cursor for interactivity */
 }
-
-.img-thumbnail:hover {
-  border: 2px solid #1abc9c;
-  transform: scale(1.1); /* Slight zoom effect */
-}
-
-/* Carousel */
-.carousel-inner img {
-  border-radius: 15px;
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.5); /* Strong shadow */
-}
-
-.carousel-caption {
-  background-color: rgba(0, 0, 0, 0.8); /* Dark semi-transparent background */
-  padding: 10px;
-  border-radius: 10px;
-  color: #ecf0f1;
-  font-size: 1.2rem;
-}
-
-/* Section Styling */
-.about-section,
-.contact-section {
-  background: #1c2833; /* Solid dark background */
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Subtle shadow */
-}
-
-.about-section h3,
-.contact-section h3 {
-  color: #1abc9c; /* Teal section headers */
-}
-
 /* Responsive Design */
-@media (max-width: 768px) {
-  .carousel-inner img {
-    height: 200px; /* Adjust image height for smaller screens */
+@media (max-width: 576px) {
+  .container {
+    margin: 0 auto;
+    padding: 15px;
   }
-
-  .card-body {
-    font-size: 0.9rem;
+  .room-image {
+    height: 300px; /* Adjust height for smaller screens */
   }
-
-  .footer {
-    font-size: 0.8rem;
+  .room-thumbnail {
+    width: 75px; /* Adjust thumbnail size for smaller screens */
+    height: 75px;
   }
 }
