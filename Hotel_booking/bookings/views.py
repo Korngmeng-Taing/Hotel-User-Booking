@@ -194,6 +194,7 @@ def delete_room_admin(request, room_id):
     return render(request, 'bookings/delete_room.html', {'room': room})
 
 @login_required
+@admin_only
 def update_room_admin(request, room_id):
     """Update room details."""
     room = get_object_or_404(Room, id=room_id)
@@ -231,6 +232,7 @@ def dashboard(request):
     rooms=Room.objects.all()
     return render(request, 'bookings/dashboard.html',{'rooms':rooms})
 @unauthenticated_user
+
 def registerPage(request):
     """Handle user registration."""
     if request.method == 'POST':
