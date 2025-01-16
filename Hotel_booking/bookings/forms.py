@@ -4,11 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
       
 class CustomUserCreationForm(UserCreationForm):
-    #This defines a new form class that inherits from UserCreationForm.
-    # It is used for creating new users with additional fields 
     email = forms.EmailField(required=True)
-    #adds an email field to the form ,making it a required field.
-
     class Meta:
         model = User
         #Specifies the model to use for the form.

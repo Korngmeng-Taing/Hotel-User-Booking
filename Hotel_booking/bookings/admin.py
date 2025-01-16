@@ -8,7 +8,7 @@ class RoomImageInline(admin.TabularInline):  # Or admin.StackedInline for a diff
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
-     list_display = ['room_type', 'price_per_night', 'capacity', 'quantity_available']
+     #list_display = ['room_type', 'price_per_night', 'capacity', 'quantity_available']
      inlines = [RoomImageInline]  # Attach the inline to the Room admin panel
      fields = ['room_type', 'price_per_night', 'capacity', 'size', 'quantity_available', 'default_image']
 @admin.register(Booking)

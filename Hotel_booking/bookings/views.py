@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from datetime import datetime, date
 from django.contrib.auth.decorators import login_required
-from .decoration import unauthenticated_user
+from .decoration import unauthenticated_user,admin_only
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -126,13 +126,14 @@ def my_bookings(request):
 
 
 @login_required
+@admin_only
 def admin_booking_list(request):
     """List all bookings for admin."""
     bookings = Booking.objects.select_related('room', 'user').all()
 
     return render(request, 'bookings/admin_booking_list.html', {'bookings': bookings})
 
-
+@admin_only
 @login_required
 def delete_booking_admin(request, booking_id):
     """Delete a booking as admin and restore room availability."""
@@ -147,7 +148,7 @@ def delete_booking_admin(request, booking_id):
         return redirect('admin_booking_list')
 
     return render(request, 'bookings/delete_booking_admin.html', {'booking': booking})
-
+@admin_only
 @login_required
 def update_booking_admin(request, booking_id):
     """Update booking details as admin."""
@@ -165,12 +166,13 @@ def update_booking_admin(request, booking_id):
 
     return render(request, 'bookings/update_booking_admin.html', {'form': form, 'booking': booking})
 
-
+@admin_only
 @login_required
 def admin_dashboard(request):
     """Admin dashboard view."""
     return render(request, 'bookings/admin_dashboard.html')
 @login_required
+@admin_only
 def admin_room_list(request):
     """List all rooms for admin."""
     rooms = Room.objects.all()
@@ -178,7 +180,7 @@ def admin_room_list(request):
         room.update_availability()
     return render(request, 'bookings/admin_room_list.html', {'rooms': rooms})
 
-
+@admin_only
 @login_required
 def delete_room_admin(request, room_id):
     """Delete a room as admin."""
@@ -237,7 +239,7 @@ def registerPage(request):
             # Save the user
             form.save()
             messages.success(request, 'Registration successful!')
-            return redirect('dashboard')
+            return redirect('login')
     else:
         form = CustomUserCreationForm()
 
